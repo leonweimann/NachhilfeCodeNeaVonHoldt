@@ -1,3 +1,5 @@
+package oop;
+
 public class Hund extends Haustier {
     // --- Konstruktor ---
 

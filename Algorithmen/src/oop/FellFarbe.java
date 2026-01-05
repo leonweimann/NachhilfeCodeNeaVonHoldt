@@ -1,3 +1,5 @@
+package oop;
+
 public class FellFarbe {
     private String farbe;
 

@@ -1,3 +1,6 @@
+package oop;
+
+@SuppressWarnings("unused")
 public class Haustier {
     // --- Eigenschaften / Attribute ---
 
