@@ -5,7 +5,7 @@ public class Sortierung {
         int arr[] = { 3, 2, 9, 1 };
         printArray(arr);
 
-        bubbleSort(arr);
+        selectionSort(arr);
 
         printArray(arr);
     }
@@ -41,6 +41,80 @@ public class Sortierung {
             }
         }
     }
+
+    /*
+     * [8, 5, 9, 2, 1, 3] <- Eingabe
+     * 
+     * [1,|5, 9, 2, 8, 3] <- 1 <=> 8
+     * [1, 2,|9, 5, 8, 3] <- 2 <=> 5
+     * ...
+     */
+    public static void selectionSort(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            int minI = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[minI]) {
+                    minI = j;
+                }
+            }
+            tauschen(arr, i, minI);
+        }
+    }
+
+    /*
+     * [8, 5, 9, 2, 1, 3]
+     * [8, 5, 9][2, 1, 3]
+     * [8][5, 9][2][1, 3]
+     * [8][5][9][2][1][3]
+     */
+    public static void mergeSort(int[] arr) {
+        mergeSortR(arr, 0, arr.length - 1);
+    }
+
+    private static void mergeSortR(int[] arr, int l, int r) {
+        if (l <= r)
+            return;
+
+        int m = (l + r) / 2;
+        mergeSortR(arr, l, m);
+        mergeSortR(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+
+    // [3, 5, 9][1, 2, 8]
+    private static void merge(int[] arr, int l, int m, int r) {
+        int copy[] = new int[arr.length];
+        int copyIndex = 0;
+
+        int i = l;
+        int j = m + 1;
+        while (i <= m && j <= r) {
+            if (arr[i] < arr[j]) {
+                copy[copyIndex] = arr[i];
+                copyIndex++;
+                i++;
+            } else {
+                copy[copyIndex] = arr[j];
+                copyIndex++;
+                j++;
+            }
+        }
+
+        for (int ii = i; i < l; ii++) {
+            copy[copyIndex] = arr[ii];
+            copyIndex++;
+        }
+        for (int jj = j; j < l; jj++) {
+            copy[copyIndex] = arr[jj];
+            copyIndex++;
+        }
+
+        for (int x = l; x < r; x++) {
+            arr[x] = copy[x - l];
+        }
+    }
+
+    // --- Hilfszeugs ---
 
     public static int getMinimum(int[] arr) {
         int min = arr[0];
