@@ -5,7 +5,7 @@ public class Sortierung {
         int arr[] = { 3, 2, 9, 1 };
         printArray(arr);
 
-        selectionSort(arr);
+        mergeSort(arr);
 
         printArray(arr);
     }
@@ -61,18 +61,35 @@ public class Sortierung {
         }
     }
 
+    public static void selectionSortArrayList(ArrayList<Integer> arr) {
+        for (int i = 0; i < arr.size(); i++) {
+            int minI = i;
+            for (int j = i + 1; i < arr.size(); j++) {
+                if (arr.get(j) < arr.get(minI)) {
+                    minI = j;
+                }
+            }
+            tauschenArrayList(arr, i, minI);
+        }
+    }
+
     /*
      * [8, 5, 9, 2, 1, 3]
      * [8, 5, 9][2, 1, 3]
      * [8][5, 9][2][1, 3]
-     * [8][5][9][2][1][3]
+     * ...[5][9]...[1][3]
+     * 
+     * MERGE:
+     * [8][5, 9][2][1, 3]
+     * [5, 8, 9][1, 2, 3]
+     * [1, 2, 3, 5, 8, 9]
      */
     public static void mergeSort(int[] arr) {
         mergeSortR(arr, 0, arr.length - 1);
     }
 
     private static void mergeSortR(int[] arr, int l, int r) {
-        if (l <= r)
+        if (l >= r)
             return;
 
         int m = (l + r) / 2;
@@ -83,7 +100,7 @@ public class Sortierung {
 
     // [3, 5, 9][1, 2, 8]
     private static void merge(int[] arr, int l, int m, int r) {
-        int copy[] = new int[arr.length];
+        int copy[] = new int[r - l + 1]; // oder einfach arr.length, das passt auch immer
         int copyIndex = 0;
 
         int i = l;
@@ -100,17 +117,17 @@ public class Sortierung {
             }
         }
 
-        for (int ii = i; i < l; ii++) {
+        for (int ii = i; ii <= m; ii++) {
             copy[copyIndex] = arr[ii];
             copyIndex++;
         }
-        for (int jj = j; j < l; jj++) {
+        for (int jj = j; jj <= r; jj++) {
             copy[copyIndex] = arr[jj];
             copyIndex++;
         }
 
-        for (int x = l; x < r; x++) {
-            arr[x] = copy[x - l];
+        for (int x = l; x <= r; x++) {
+            arr[x] = copy[x - l]; // x - l, da wir in copy von 0 zählen, in arr aber ab l (Anfang links)
         }
     }
 
