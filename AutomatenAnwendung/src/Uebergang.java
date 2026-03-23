@@ -1,9 +1,9 @@
-public class Übergang {
+public class Uebergang {
     private Zustand eingangsZustand;
     private Zustand ausgangsZustand;
     private String eingabe;
 
-    public Übergang(Zustand eingang, Zustand ausgang, String eingabe) {
+    public Uebergang(Zustand eingang, Zustand ausgang, String eingabe) {
         this.eingangsZustand = eingang;
         this.ausgangsZustand = ausgang;
         this.eingabe = eingabe;
