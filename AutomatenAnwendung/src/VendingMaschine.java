@@ -21,8 +21,9 @@ public class VendingMaschine {
         Zustand q2 = new Zustand("Produkt ausgeben und Rückgeld");
         Zustand q3 = new Zustand("Dankeschön");
 
-        Zustand zustaende[] = {q0, q1, q2, q3};
-        automat = new Automat(zustaende, q0, q1);
+        Zustand[] zustaende = {q0, q1, q2, q3};
+        Zustand[] enden = {q3};
+        automat = new Automat(zustaende, q0, enden);
 
         automat.addUebergang(q0, q1, "Artikel bestätigen");
         automat.addUebergang(q1, q1, "nicht genug €");

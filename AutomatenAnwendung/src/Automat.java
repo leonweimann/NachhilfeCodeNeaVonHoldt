@@ -1,28 +1,30 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Es gibt
  * - Zustaende, zwischen welchen der Automat wechselt.
  * - genau einen Startzustand.
- * - genau einen Endzustand (Vereinfachung).
- * - eine Übergangsfunktion (implementiert uebergaenge / Folgetafel)
+ * - Endzustände.
+ * - eine Übergangsfunktion (implementiert Uebergaenge / Folgetafel)
  */
 public class Automat {
     private ArrayList<Zustand> zustaende;
     private Zustand start;
-    private Zustand ende;
+    private ArrayList<Zustand> enden;
     private ArrayList<Uebergang> uebergaenge;
     private Zustand aktuell;
 
-    public Automat(Zustand zustaende[], Zustand start, Zustand ende) {
+    public Automat(Zustand[] zustaende, Zustand start, Zustand[] enden) {
         this.zustaende = new ArrayList<>();
-        for (int i = 0; i < zustaende.length; i++) {
-            this.zustaende.add(zustaende[i]);
-        }
+        this.zustaende.addAll(Arrays.asList(zustaende));
+
+        this.enden = new ArrayList<>();
+        this.enden.addAll(Arrays.asList(enden));
+
         this.uebergaenge = new ArrayList<>();
 
         this.start = start;
-        this.ende = ende;
         this.aktuell = start;
     }
 
@@ -34,8 +36,8 @@ public class Automat {
         return this.start;
     }
 
-    public Zustand ende() {
-        return this.ende;
+    public ArrayList<Zustand> enden() {
+        return this.enden;
     }
 
     public Zustand aktuell() {
@@ -60,5 +62,78 @@ public class Automat {
         }
 
         return aktuell;
+    }
+
+    public boolean istEnde(Zustand z) {
+        for (int i = 0; i < enden.size(); i++)
+            if (enden.get(i) == z)
+                return true;
+        return false;
+    }
+
+    /**
+     * Setzt den Automaten in den Startzustand zurück.
+     * - Wenn force == true, dann aktueller Zustand egal.
+     * - Sonst nur, wenn im Endzustand.
+     * Wenn wir zurücksetzen, bedeutet das, wir setzten den
+     * aktuellen Zustand auf den Start zurück.
+     */
+    public void zuruecksetzen(boolean force) {
+        if (istEnde(aktuell) || force) {
+            aktuell = start;
+        }
+    }
+
+    /**
+     * Schaut, ob der Automat, so wie er konfiguriert ist, gültig ist.
+     * - Endzustand hat akzeptiert keine Eingaben
+     * - Jeder Übergang von einem Zustand benötigt eine eindeutige Eingabe
+     * - Normale Zustände haben mind. einen Übergang
+     */
+    public boolean istGueltig() {
+        // Endzustand hat keinen Übergang
+        boolean endeHatUebergang = false;
+        for (int i = 0; i < uebergaenge.size(); i++) {
+            Uebergang u = uebergaenge.get(i);
+            if (istEnde(u.eingangsZustand())) {
+                endeHatUebergang = true;
+            }
+        }
+
+        // Eingaben sind eindeutig && Zustand hat mind. einen Übergang
+        boolean eingabenEindeutig = true;
+        boolean mindEinUebergang = true;
+        for (int i = 0; i < zustaende.size(); i++) {
+            Zustand z = zustaende.get(i);
+
+            ArrayList<String> eingaben = new ArrayList<>();
+            // Passende Übergänge für diesen Zustand
+            for (int j = 0; j < uebergaenge.size(); j++) {
+                Uebergang u = uebergaenge.get(j);
+                if (u.eingangsZustand() == z) {
+                    // Übergang passt zu diesem Zustand (äußere for-Schleife)
+                    eingaben.add(u.eingabe());
+                }
+            }
+
+            if (eingaben.isEmpty() && !istEnde(z)) {
+                // Zustand ohne Übergänge
+                mindEinUebergang = false;
+            }
+
+            // Finde Doppelungen
+            for (int k = 0; k < eingaben.size(); k++) {
+                String eingabe = eingaben.get(k);
+                for (int l = k + 1; l < eingaben.size(); l++) {
+                    if (eingaben.get(l) == eingabe) {
+                        // Doppelung
+                        eingabenEindeutig = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return endeHatUebergang && eingabenEindeutig && mindEinUebergang;
     }
 }
